@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive</title>
+
+    <style>
+        * { box-sizing: border-box; }
+        
+        body {
+          margin: 0;
+          font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          overflow: hidden;
+          background: linear-gradient(-45deg, #ff6ec4, #7873f5, #ff9a9e, #fad0c4);
+          background-size: 400% 400%;
+          animation: gradient 12s ease infinite;
+          color: white;
+        }
+        
+        @keyframes gradient {
+          0% {background-position: 0% 50%;}
+          50% {background-position: 100% 50%;}
+          100% {background-position: 0% 50%;}
+        }
+        
+        .container {
+          width: 90%;
+          max-width: 420px;
+          position: relative;
+          z-index: 2;
+        }
+        
+        .card {
+          backdrop-filter: blur(20px);
+          background: rgba(255, 255, 255, 0.18);
+          padding: 25px;
+          border-radius: 22px;
+          box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+          transition: all 0.4s ease;
+          transform: translateY(0);
+        }
+        
+        .card.fade-out {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        
+        .card.fade-in {
+          animation: fadeIn 0.4s ease;
+        }
+        
+        @keyframes fadeIn {
+          from {opacity:0; transform: translateY(15px);}
+          to {opacity:1; transform: translateY(0);}
+        }
+        
+        h2 { margin-bottom: 10px; font-weight: 500; }
+        p { font-size: 14px; opacity: 0.9; }
+        
+        button {
+          width: 100%;
+          padding: 14px;
+          margin-top: 12px;
+          border: none;
+          border-radius: 30px;
+          font-size: 15px;
+          font-weight: 600;
+          background: white;
+          color: #444;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+        }
+        
+        button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 0 25px rgba(255,255,255,0.7);
+        }
+        
+        button:active {
+          transform: scale(0.96);
+        }
+        
+        /* Ripple effect */
+        button::after {
+          content: "";
+          position: absolute;
+          width: 0;
+          height: 0;
+          background: rgba(0,0,0,0.1);
+          border-radius: 50%;
+          transform: scale(0);
+          transition: transform 0.5s ease;
+        }
+        
+        button:active::after {
+          width: 200%;
+          height: 200%;
+          transform: scale(1);
+        }
+        
+        .progress {
+          height: 5px;
+          background: rgba(255,255,255,0.2);
+          border-radius: 20px;
+          margin-bottom: 20px;
+          overflow: hidden;
+        }
+        
+        .progress-bar {
+          height: 100%;
+          width: 0%;
+          background: white;
+          transition: width 0.4s ease;
+        }
+        
+        .suspense-box {
+          margin-top:20px;
+          background:black;
+          color:white;
+          padding:15px;
+          border-radius:12px;
+          letter-spacing:3px;
+          text-align:center;
+          animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+          0% { box-shadow: 0 0 0 rgba(255,255,255,0.5); }
+          50% { box-shadow: 0 0 20px rgba(255,255,255,0.8); }
+          100% { box-shadow: 0 0 0 rgba(255,255,255,0.5); }
+        }
+        
+        .meme-img {
+          width:100%;
+          border-radius:15px;
+          margin-top:15px;
+          transition: transform 0.4s ease;
+        }
+        
+        .meme-img:hover {
+          transform: scale(1.03);
+        }
+        </style>
+</head>
+
+<body>
+
+    <div class="blob"></div>
+    <div class="blob"></div>
+
+    <div class="container">
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div id="content" class="card">
+            <h2>Ready for a small interactive moment? ✨</h2>
+            <button onclick="start()">Start</button>
+        </div>
+
+    </div>
+
+    <script>
+
+        function smoothUpdate(html) {
+          const card = document.getElementById("content");
+          card.classList.add("fade-out");
+        
+          setTimeout(() => {
+            card.innerHTML = html;
+            card.classList.remove("fade-out");
+            card.classList.add("fade-in");
+          }, 250);
+        }
+        
+        function updateProgress(p){
+          document.getElementById("progressBar").style.width = p + "%";
+        }
+        
+        function start(){
+          updateProgress(25);
+          smoothUpdate(`
+            <h2>How are you feeling today? 💭</h2>
+            <button onclick="selectMood('amazing')">Amazing ✨</button>
+            <button onclick="selectMood('okay')">Okay 🙂</button>
+            <button onclick="selectMood('low')">Low energy 😴</button>
+          `);
+        }
+        
+        function selectMood(mood){
+          updateProgress(50);
+        
+          if(mood === "amazing"){
+            smoothUpdate(`
+              <h2>Amazing energy detected ✨</h2>
+              <p>That glow looks good on you 😌</p>
+              <button onclick="nextStep()">Continue</button>
+            `);
+          }
+        
+          if(mood === "okay"){
+            smoothUpdate(`
+              <h2>Balanced mood 🙂</h2>
+              <p>Calm days have their own charm 🌸</p>
+              <button onclick="nextStep()">Continue</button>
+            `);
+          }
+        
+          if(mood === "low"){
+            smoothUpdate(`
+              <h2>Low energy mode 😴</h2>
+              <p>Take it slow. You deserve softness 💫</p>
+              <button onclick="nextStep()">Continue</button>
+            `);
+          }
+        }
+        
+        function nextStep(){
+          updateProgress(75);
+          smoothUpdate(`
+            <h2>What sounds better right now? 🎧</h2>
+            <button onclick="entertainment('comics')">📚 Comics</button>
+            <button onclick="entertainment('series')">📺 Series</button>
+            <button onclick="entertainment('movie')">🎬 Movie</button>
+            <button onclick="entertainment('call')">📞 Call your 1nOnly male friend</button>
+          `);
+        }
+        
+        function entertainment(choice){
+          updateProgress(100);
+        
+          let message = "";
+        
+          if(choice === "comics"){
+            message = `
+              <h2>Comic Pick 📚</h2>
+              <p>The Greatest Estate Developer</p>
+              <p>Spy X Family</p>
+              <p>DeathNote</p>
+            `;
+          }
+        
+          if(choice === "series"){
+            message = `
+              <h2>Series Mode 📺</h2>
+              <p>Bhay Series India – Gaurav Tiwari</p>
+              <p>Something gripping or comforting? 👀</p>
+            `;
+          }
+        
+          if(choice === "movie"){
+            message = `
+              <h2>Movie Time 🎬</h2>
+              <p>Pick wisely… or ask your 1nOnly male friend 😌</p>
+            `;
+          }
+        
+          if(choice === "call"){
+            message = `
+              <h2>Dialing… 📞</h2>
+              <p>1nOnly male friend might respond in free time ✨</p>
+            `;
+          }
+        
+          smoothUpdate(`
+            ${message}
+            <br>
+            <h3>One last thing… 💌</h3>
+            <button onclick="photoRequest()">📸 Pay with your photo</button>
+          `);
+        }
+        
+        function photoRequest(){
+          smoothUpdate(`
+            <h2>Payment Required 💫</h2>
+            <p>This page accepts payments in smiles only 😊</p>
+        
+            <img src="https://i.imgflip.com/akm0md.jpg" class="meme-img">
+        
+            <p style="margin-top:15px;">
+              And hey… don’t tell anyone you're on sick leave 🤫  
+              otherwise… suspense.
+            </p>
+        
+            <div class="suspense-box">
+              ......
+            </div>
+          `);
+        
+          setTimeout(openMailPopup, 5000);
+        }
+        
+        function openMailPopup(){
+          const overlay = document.createElement("div");
+          overlay.style.position = "fixed";
+          overlay.style.inset = "0";
+          overlay.style.background = "rgba(0,0,0,0.5)";
+          overlay.style.display = "flex";
+          overlay.style.justifyContent = "center";
+          overlay.style.alignItems = "center";
+          overlay.style.zIndex = "999";
+          overlay.style.opacity = "0";
+          overlay.style.transition = "opacity 0.4s ease";
+        
+          const mail = document.createElement("div");
+          mail.style.background = "white";
+          mail.style.color = "#333";
+          mail.style.padding = "22px";
+          mail.style.borderRadius = "20px";
+          mail.style.width = "85%";
+          mail.style.maxWidth = "340px";
+          mail.style.transform = "scale(0.9)";
+          mail.style.transition = "all 0.4s ease";
+        
+          mail.innerHTML = `
+            <h3>New Message 💌</h3>
+            <p id="typedText"></p>
+          `;
+        
+          overlay.appendChild(mail);
+          document.body.appendChild(overlay);
+        
+          setTimeout(()=>{
+            overlay.style.opacity = "1";
+            mail.style.transform = "scale(1)";
+            typeWriter("Just wanted to say... missing you a little extra today ✨ Rest properly, okay? 🌸", "typedText");
+          },50);
+        
+          setTimeout(()=>{
+            overlay.style.opacity = "0";
+            mail.style.transform = "scale(0.9)";
+            setTimeout(()=> overlay.remove(), 400);
+          },4000);
+        }
+        
+        function typeWriter(text, elementId){
+          let i = 0;
+          const el = document.getElementById(elementId);
+          const interval = setInterval(()=>{
+            el.innerHTML += text.charAt(i);
+            i++;
+            if(i >= text.length) clearInterval(interval);
+          },35);
+        }
+        
+        </script>
+
+</body>
+</html>
